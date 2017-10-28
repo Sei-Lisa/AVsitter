@@ -634,6 +634,7 @@ default
     {
         integer one = (integer)msg;
         integer two = (integer)((string)id);
+        list data;
         if (num == 90075) // 90075=old-style helper ask to animate
         {
             if (one == SCRIPT_CHANNEL)
@@ -646,6 +647,36 @@ default
         {
             release_sitter(one);
             return;
+        }
+        if (num == 90019)
+        {
+            if (id == "KFM")
+            {
+                HASKEYFRAME = one;
+                llSetKeyframedMotion([], [KFM_COMMAND, KFM_CMD_PLAY+!one]);
+                if (!one)
+                {
+                    data = llParseStringKeepNulls(msg, ["|"], []);
+                    if (llGetListLength(data) > 1)
+                    {
+                        llSleep(0.2);
+                        if (llList2String(data, 1) != "")
+                            llSetPos((vector)llList2String(data, 1));
+                        if (llList2String(data, 2) != "")
+                            llSetLocalRot((rotation)llList2String(data, 2));
+                    }
+                }
+            }
+            /*else
+            {
+                data = llParseStringKeepNulls(id, ["|"], []);
+                two = llGetListLength(data);
+                for (one = 0; one < two; ++one)
+                {
+                    data += llList2Integer(data, one);
+                }
+                llSetKeyframedMotion([], llList2List(data, two, two*2));
+            }*/
         }
         if (num == 90030) // 90030=swap sitters
         {
@@ -718,7 +749,7 @@ default
         }
         if (id == MY_SITTER)
         {
-            list data = llParseStringKeepNulls(msg, ["|"], []);
+            data = llParseStringKeepNulls(msg, ["|"], []);
             if (num == 90001) // 90001=start an overlay animation
             {
                 llStartAnimation(msg);
@@ -772,7 +803,7 @@ default
         {
             if (num == 90055) // 90055=anim info from AVsitB
             {
-                list data = llParseStringKeepNulls(id, ["|"], []);
+                data = llParseStringKeepNulls(id, ["|"], []);
                 OLD_POSE_NAME = CURRENT_POSE_NAME;
                 CURRENT_POSE_NAME = llList2String(data, 0);
                 OLD_ANIMATION_FILENAME = CURRENT_ANIMATION_FILENAME;
